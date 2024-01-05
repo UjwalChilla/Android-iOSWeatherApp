@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { debounce } from "lodash";
@@ -47,6 +47,30 @@ export default function CitySearch() {
       });
     }
   };
+
+  // Default location set to Chicago on load
+  useEffect(() => {
+    // Wrap the asynchronous function in the useEffect to avoid infinite loops
+    const fetchDefaultWeatherData = async () => {
+      try {
+        const data = await fetchWeatherForecast({
+          cityName: "Chicago",
+          days: "7",
+        });
+        setWeather(data);
+        setLocation({
+          name: "Chicago",
+          country: "United States of America",
+        });
+
+        console.log("got forecast: ", data);
+      } catch (error) {
+        console.error("Error fetching default weather data:", error.message);
+      }
+    };
+
+    fetchDefaultWeatherData();
+  }, []);
 
   // Debounce the handleSearch function to prevent rapid API calls
   const handleTextDebounce = useCallback(debounce(handleSearch, 200), []);

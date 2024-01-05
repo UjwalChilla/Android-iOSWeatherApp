@@ -4,10 +4,14 @@ import { fetchWeatherForecast } from "./weather.js";
 import { useWeatherContext } from "./WeatherContext.js";
 import { weatherImages } from "./constants.js";
 
-// UpcomingForecast component displays the forecast for the next 7 days
 export default function UpcomingForecast() {
+  // State to store the fetched forecast data
   const [forecastData, setForecastData] = useState([]);
+
+  // Access the location from the weather context
   const { location } = useWeatherContext();
+
+  // Days of the week to display in the forecast
   const [dayList] = useState([
     "Monday",
     "Tuesday",
@@ -18,22 +22,25 @@ export default function UpcomingForecast() {
     "Sunday",
   ]);
 
-  // useEffect to fetch weather forecast data when the location changes
+  // Fetch weather forecast data when the component mounts or location changes
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch weather forecast data from the API
         const data = await fetchWeatherForecast({
           cityName: location?.name,
-          days: 7,
+          days: 9, // Fetch extra days to handle rolling display
         });
 
         console.log("Upcoming Forecast API Response:", data);
 
         // Check if the API response has the expected structure
         if (data && data.forecast && data.forecast.forecastday) {
+          // Slice the data to get the rolling 7-day forecast
+          const slicedData = data.forecast.forecastday.slice(2, 9);
+
           // Update the forecast data state
-          setForecastData(data.forecast.forecastday);
+          setForecastData(slicedData);
         } else {
           console.warn("Invalid data structure in API response.");
         }
@@ -50,47 +57,54 @@ export default function UpcomingForecast() {
     <View style={{ marginBottom: 2, marginHorizontal: 15, marginTop: 3 }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {/* Map through the forecast data and render each day's forecast */}
-        {forecastData.map((day, index) => (
-          <View
-            key={index}
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              width: 130,
-              height: 150,
-              borderRadius: 20,
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              marginRight: 4,
-            }}
-          >
-            {/* Display the weather condition image based on the condition text */}
-            <Image
-              source={weatherImages[day?.day?.condition.text]}
-              style={{ height: 40, width: 40 }}
-            />
+        {forecastData.map((item, index) => {
+          // Extract day name from the date
+          const date = new Date(item.date);
+          const options = { weekday: "long" };
+          let dayName = date.toLocaleDateString("en-US", options);
+          dayName = dayName.split(",")[0];
 
-            {/* Display the day of the week */}
-            <Text
+          return (
+            <View
+              key={index}
               style={{
-                color: "white",
-                fontWeight: "bold",
-                fontSize: 17,
-                marginTop: 4,
+                justifyContent: "center",
+                alignItems: "center",
+                width: 130,
+                height: 150,
+                borderRadius: 20,
+                paddingHorizontal: 15,
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                marginRight: 4,
               }}
             >
-              {dayList[index]}
-            </Text>
+              {/* Display the weather condition image based on the condition text */}
+              <Image
+                source={weatherImages[item?.day?.condition?.text || "other"]}
+                style={{ height: 40, width: 40 }}
+              />
 
-            {/* Display the average temperature for the day */}
-            <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>
-              {day.day?.avgtemp_f
-                ? `${day.day.avgtemp_f}°F`
-                : "Unknown Temperature"}
-            </Text>
-          </View>
-        ))}
+              {/* Display the day of the week */}
+              <Text
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  fontSize: 17,
+                  marginTop: 4,
+                }}
+              >
+                {dayName}
+              </Text>
+
+              {/* Display the average temperature for the day */}
+              <Text
+                style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+              >
+                {item?.day?.avgtemp_f}&#176;F
+              </Text>
+            </View>
+          );
+        })}
       </ScrollView>
     </View>
   );

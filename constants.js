@@ -1,5 +1,5 @@
 // API key for accessing weather data
-export const apiKey = "709d277c4a1e440eae2200729232512";
+export const apiKey = "bb3e5fbb67754fd792b185044240501";
 
 // Weather images mapping to different weather conditions
 import partlyCloudy from "./assets/partlycloudy.png";
