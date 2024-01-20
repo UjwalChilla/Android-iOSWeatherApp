@@ -29,7 +29,7 @@ export default function UpcomingForecast() {
         // Fetch weather forecast data from the API
         const data = await fetchWeatherForecast({
           cityName: location?.name,
-          days: 9, // Fetch extra days to handle rolling display
+          days: 5, // Fetch extra days to handle rolling display
         });
 
         console.log("Upcoming Forecast API Response:", data);
@@ -37,7 +37,7 @@ export default function UpcomingForecast() {
         // Check if the API response has the expected structure
         if (data && data.forecast && data.forecast.forecastday) {
           // Slice the data to get the rolling 7-day forecast
-          const slicedData = data.forecast.forecastday.slice(2, 9);
+          const slicedData = data.forecast.forecastday.slice(0, 5);
 
           // Update the forecast data state
           setForecastData(slicedData);
