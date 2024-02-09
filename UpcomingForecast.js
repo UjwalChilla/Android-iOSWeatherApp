@@ -32,8 +32,6 @@ export default function UpcomingForecast() {
           days: 5, // Fetch extra days to handle rolling display
         });
 
-        console.log("Upcoming Forecast API Response:", data);
-
         // Check if the API response has the expected structure
         if (data && data.forecast && data.forecast.forecastday) {
           // Slice the data to get the rolling 7-day forecast
@@ -41,8 +39,6 @@ export default function UpcomingForecast() {
 
           // Update the forecast data state
           setForecastData(slicedData);
-        } else {
-          console.warn("Invalid data structure in API response.");
         }
       } catch (error) {
         console.error("Upcoming Forecast API Errors:", error);
@@ -58,11 +54,14 @@ export default function UpcomingForecast() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {/* Map through the forecast data and render each day's forecast */}
         {forecastData.map((item, index) => {
-          // Extract day name from the date
-          const date = new Date(item.date);
+          // Extract day name for tomorrow's date
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + index + 1); // Increment index by 1 to start from tomorrow
           const options = { weekday: "long" };
-          let dayName = date.toLocaleDateString("en-US", options);
+          let dayName = tomorrow.toLocaleDateString("en-US", options);
           dayName = dayName.split(",")[0];
+
+          console.log("Index:", index, "Day Name:", dayName, "Item:", item); // Add this line for debugging
 
           return (
             <View
@@ -80,7 +79,7 @@ export default function UpcomingForecast() {
             >
               {/* Display the weather condition image based on the condition text */}
               <Image
-                source={weatherImages[item?.day?.condition?.text || "other"]}
+                source={weatherImages[item?.day?.condition?.text]}
                 style={{ height: 40, width: 40 }}
               />
 

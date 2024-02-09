@@ -13,6 +13,7 @@ export const weatherImages = {
   "Partly cloudy": partlyCloudy,
   "Moderate rain": moderateRain,
   "Patchy rain possible": moderateRain,
+  "Patchy rain nearby": moderateRain,
   Sunny: sun,
   Clear: sun,
   Overcast: cloud,

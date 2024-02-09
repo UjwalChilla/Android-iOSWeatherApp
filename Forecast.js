@@ -28,7 +28,6 @@ export default function Forecast() {
           cityName: location?.name,
           days: 1,
         });
-        console.log("Weather Data:", data);
 
         // Extract current weather and forecast data
         const currentWeather = data?.current;

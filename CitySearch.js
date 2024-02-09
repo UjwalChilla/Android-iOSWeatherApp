@@ -32,8 +32,6 @@ export default function CitySearch() {
         name: loc.name,
         country: loc.country,
       });
-
-      console.log("got forecast: ", data);
     });
   };
 
@@ -42,7 +40,6 @@ export default function CitySearch() {
     if (value.length > 2) {
       // Fetch location data based on the user input
       fetchLocations({ cityName: value }).then((data) => {
-        console.log("get locations: ", data);
         setLocations(data);
       });
     }
@@ -62,8 +59,6 @@ export default function CitySearch() {
           name: "Chicago",
           country: "United States of America",
         });
-
-        console.log("got forecast: ", data);
       } catch (error) {
         console.error("Error fetching default weather data:", error.message);
       }
